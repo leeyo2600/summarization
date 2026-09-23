@@ -1,0 +1,34 @@
+/* MOIS-inspired work interface. No official-government-site certification. */
+.stApp {background:#fff;color:#1d2636;font-family:'Malgun Gothic','맑은 고딕',sans-serif}
+.block-container {max-width:1000px;padding-top:2.5rem;padding-bottom:3rem}
+h1,h2,h3 {color:#162d4c;letter-spacing:-.045em}
+h1 {font-size:2.2rem!important;font-weight:750!important;line-height:1.35!important}
+h3 {font-size:1.18rem!important}
+[data-testid="stCaptionContainer"] {color:#526171}
+.service-strip {background:#f1f4f8;border-top:3px solid #164a80;padding:10px 16px;font-size:12px;color:#43536a;display:flex;justify-content:space-between;gap:12px}
+.brand {padding:25px 0 22px;display:flex;align-items:center;gap:18px;border-bottom:2px solid #193958;margin:0}
+.brand strong {font-size:29px;letter-spacing:-.06em;color:#172c45}
+.brand span {font-size:15px;color:#485a6e;border-left:1px solid #c5ced9;padding-left:18px}
+.steps {display:flex;gap:0;margin:24px 0 28px;border:1px solid #cdd5df;border-radius:6px;overflow:hidden}
+.step {flex:1;display:flex;align-items:center;gap:10px;padding:16px 18px;background:#f5f7fa;color:#536176;font-size:14px;font-weight:650;border-right:1px solid #d5dce5;border-radius:0}
+.step:last-child {border-right:0}
+.step b {display:grid;place-items:center;min-width:27px;height:27px;border-radius:50%;background:#e1e7ee;color:#425772;font-size:12px}
+.step.active {background:#eaf2fc;color:#153e72;box-shadow:inset 0 -3px #185da5}
+.step.active b {background:#185da5;color:white}
+.step.done {background:#f5f8fc;color:#284f78}
+.step.done b {background:#dce9f7;color:#284f78}
+.intro-note {padding:15px 18px;margin:0 0 16px;background:#f3f7fc;border-left:3px solid #2569ad;color:#435b73;font-size:14px;line-height:1.75}
+[data-testid="stVerticalBlockBorderWrapper"] {background:#fff;border-radius:8px!important;border-color:#d6dde6!important}
+[data-testid="stTextInput"] input {min-height:48px;font-size:15px}
+[data-testid="stTextInput"] [data-baseweb="input"] {border-radius:5px;background:#fff;border-color:#8697ab}
+[data-testid="stFileUploaderDropzone"] {background:#f6f9fd;border:1px dashed #8ba4c1;border-radius:6px;padding:28px 20px}
+div.stButton>button,div.stDownloadButton>button,[data-testid="stFileUploaderDropzone"] button {min-height:48px;border-radius:5px;border:1px solid #748aa4;background:#fff;color:#173d67;font-weight:650;transition:background .15s}
+div.stButton>button:hover,div.stDownloadButton>button:hover,[data-testid="stFileUploaderDropzone"] button:hover {background:#eef4fb;border-color:#174f8c;color:#153f6f}
+div.stButton>button[kind="primary"],div.stDownloadButton>button[kind="primary"] {background:#175b9e;color:#fff;border:1px solid #175b9e;min-height:56px;box-shadow:none}
+div.stButton>button[kind="primary"]:hover,div.stDownloadButton>button[kind="primary"]:hover {background:#104579;border-color:#104579;color:#fff}
+div.stButton>button:disabled {background:#e7ebf0!important;color:#697789!important;border-color:#d5dde6!important;box-shadow:none}
+button:focus-visible,input:focus-visible {outline:3px solid #317eca!important;outline-offset:3px}
+[data-testid="stMetricValue"] {color:#164777;font-size:1.8rem}
+.eyebrow {color:#3b5d82;font-size:12px;font-weight:700;letter-spacing:.04em;margin:8px 0}
+.footer-note {margin-top:35px;padding-top:20px;border-top:1px solid #cdd5df;color:#586777;font-size:12px;line-height:1.9}
+@media(max-width:540px) {.block-container{padding:1.2rem 1rem 2rem}.brand{gap:10px;padding:20px 0}.brand strong{font-size:23px}.brand span{font-size:12px;padding-left:10px}.step{padding:12px 7px;gap:5px;font-size:12px}.service-strip{font-size:11px;padding:9px}.service-strip span:last-child{display:none}h1{font-size:1.75rem!important}}
