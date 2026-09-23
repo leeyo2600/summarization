@@ -1,0 +1,14 @@
+{
+  "model_path": "models/mykor/A.X-4.0-Light-gguf/A.X-4.0-Light-Q4_K_M.gguf",
+  "n_ctx": 4096,
+  "n_gpu_layers": -1,
+  "max_tokens": 700,
+  "n_batch": 128,
+  "temperature": 0.0,
+  "converter_jar": "tools/converter/target/hwp-converter.jar",
+  "model_source": {
+    "type": "huggingface",
+    "repo_id": "mykor/A.X-4.0-Light-gguf",
+    "filename": "A.X-4.0-Light-Q4_K_M.gguf"
+  }
+}
