@@ -1,5 +1,6 @@
 """Optional real-fixture regression. No provider calls or permanent outputs."""
 import shutil
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -26,8 +27,10 @@ class Batch46Tests(unittest.TestCase):
             self.assertEqual(len(result['issues']),2)
             self.assertTrue(all('DRM' in x['error'] for x in result['issues']))
             self.assertTrue(all(r[2] and r[3] and not r[4] for r in result['rows']))
-            self.assertEqual(sum(r[0].startswith('전자정부법') for r in result['rows']),3)
-            self.assertTrue(any(r[0].startswith('학점인정 등에 관한 업무처리 지침') for r in result['rows']))
-            self.assertTrue(any(r[0].startswith('자율주행자동차 상용화 촉진 및 지원에 관한 법률(김희정') for r in result['rows']))
-            self.assertFalse(any(r[0].startswith('◦') for r in result['rows']))
+            labels=[re.sub(r'^\d+(?:-\d+)?\. ','',r[0]) for r in result['rows']]
+            self.assertEqual(sum(label.startswith('전자정부법') for label in labels),3)
+            self.assertTrue(any(label.startswith('학점인정 등에 관한 업무처리 지침') for label in labels))
+            self.assertTrue(any(label.startswith('자율주행자동차 상용화 촉진 및 지원에 관한 법률(김희정') for label in labels))
+            self.assertFalse(any(label.startswith('◦') for label in labels))
+            self.assertTrue(all('대표발의' not in row[0] and ' / ' not in row[2] for row in result['rows']))
             self.assertIsNotNone(result['xlsx'])

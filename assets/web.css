@@ -31,4 +31,8 @@ button:focus-visible,input:focus-visible {outline:3px solid #317eca!important;ou
 [data-testid="stMetricValue"] {color:#164777;font-size:1.8rem}
 .eyebrow {color:#3b5d82;font-size:12px;font-weight:700;letter-spacing:.04em;margin:8px 0}
 .footer-note {margin-top:35px;padding-top:20px;border-top:1px solid #cdd5df;color:#586777;font-size:12px;line-height:1.9}
+.loading-line {display:flex;align-items:center;gap:10px;color:#175b9e;padding:10px 0}
+.loading-ring {display:inline-block;width:20px;height:20px;border:3px solid #d9e5f1;border-top-color:#175b9e;border-radius:50%;animation:law-spin 1s linear infinite}
+@keyframes law-spin {to {transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce) {.loading-ring {animation:none}}
 @media(max-width:540px) {.block-container{padding:1.2rem 1rem 2rem}.brand{gap:10px;padding:20px 0}.brand strong{font-size:23px}.brand span{font-size:12px;padding-left:10px}.step{padding:12px 7px;gap:5px;font-size:12px}.service-strip{font-size:11px;padding:9px}.service-strip span:last-child{display:none}h1{font-size:1.75rem!important}}

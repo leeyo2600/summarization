@@ -22,7 +22,8 @@ CHANGE_PROMPT = PROMPT + '''
 JSON {"items":["- 개정사항"]} 형식을 유지한다.
 '''
 BASE_URL = 'https://api.openai.com/v1'
-MODEL = 'gpt-6-luna'
+MODEL = 'gpt-6-luna'  # Main-content summarization only.
+DEPARTMENT_MODEL = 'gpt-6-sol'  # Remarks / department recommendation only.
 CONTEXT = 1_050_000
 OUTPUT = 8192
 # Use OS trust roots (including Windows enterprise certificates), retaining
@@ -72,11 +73,11 @@ class ApiSummarizer:
     def _request(self,text,depth,whole_document=False,prompt=PROMPT):
         payload={'model':self.model,'messages':[{'role':'system','content':prompt},
                  {'role':'user','content':'<자료>\n'+text+'\n</자료>'}],self.token_field:self.output}
-        if self.model==MODEL:
-            payload['reasoning_effort']='none'
+        if self.model in {'gpt-6-luna','gpt-6-sol','gpt-6-astra'}:
+            payload['reasoning_effort']='none' if self.model=='gpt-6-luna' else 'medium'
             payload['response_format']={'type':'json_object'}
         try:
-            response=httpx.post(self.url,json=payload,headers={'Authorization':'Bearer '+self.key},timeout=120,follow_redirects=False,verify=SSL_CONTEXT)
+            response=httpx.post(self.url,json=payload,headers={'Authorization':'Bearer '+self.key},timeout=300 if self.model in {'gpt-6-sol','gpt-6-astra'} else 120,follow_redirects=False,verify=SSL_CONTEXT)
         except httpx.TimeoutException:
             raise ValueError('API 응답 시간 초과: 네트워크 상태를 확인하고 다시 시도하세요.') from None
         except httpx.ConnectError as error:

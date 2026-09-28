@@ -1,4 +1,5 @@
 # Third-party components
+- Department embedding: https://huggingface.co/dragonkue/snowflake-arctic-embed-l-v2.0-ko (Apache-2.0). Downloaded separately, not included in the source ZIP.
 - Converter source: https://github.com/neolord0/hwp2hwpx
   Commit edc05278506b663d5bdd98050a51f54b7ff5e0bc, Apache-2.0.
   Source copied unchanged except a new ConvertMain.java entrypoint and replacement build POM.

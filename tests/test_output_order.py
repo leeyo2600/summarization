@@ -12,6 +12,7 @@ from openpyxl import load_workbook
 from lawtool import ROOT
 from webapp.jobs import build_units, process
 from webapp.packages import unpack
+from webapp.display import unit_labels
 
 
 def archive(entries):
@@ -29,6 +30,32 @@ def bill(law):
 
 
 class OutputOrderTests(unittest.TestCase):
+    def test_duplicate_law_labels(self):
+        units=[{'law':'전자정부법','representative':'김영진'} for _ in range(3)]
+        self.assertEqual(unit_labels(units,'37'),['37-1. 전자정부법','37-2. 전자정부법','37-3. 전자정부법'])
+        self.assertEqual(unit_labels(units[:1],'37'),['37. 전자정부법'])
+        self.assertEqual(unit_labels(units,'10-2'),['10-2-1. 전자정부법','10-2-2. 전자정부법','10-2-3. 전자정부법'])
+        self.assertEqual(unit_labels([units[0],{'law':'다른법'},units[1]],'37'),
+                         ['37-1. 전자정부법','37. 다른법','37-2. 전자정부법'])
+
+    def test_duplicate_bills_written_as_separate_numbered_rows(self):
+        docs=[{'name':f'{i}.hwpx','source':f'{i}.hwpx','scope':('0','37. 의견조회.zip'),
+               'lines':['전자정부법 일부개정법률안','주요내용','지원 확대']} for i in range(3)]
+        units=[{'law':'전자정부법','representative':'김영진','bill_number':str(i),
+                'sections':['지원 확대'],'documents':[doc]} for i,doc in enumerate(docs)]
+        with tempfile.TemporaryDirectory() as tmp:
+            directory=Path(tmp); shutil.copy2(ROOT/'config.json',directory/'config.json')
+            engine=Mock(audit=[]); engine.summarize_document.return_value=['지원 확대']
+            with patch('webapp.jobs.ROOT',directory),patch('webapp.jobs.ApiSummarizer',return_value=engine),\
+                 patch('webapp.jobs.prepare',return_value=([{'name':'묶음','letter':None,'documents':docs}],[])),\
+                 patch('webapp.jobs.build_units',return_value=(units,[])):
+                result=process([],'key',Queue())
+            book=load_workbook(io.BytesIO(result['xlsx']))
+            self.assertEqual([row[0] for row in book.active.iter_rows(min_row=2,values_only=True)],
+                             ['37-1. 전자정부법','37-2. 전자정부법','37-3. 전자정부법'])
+            book.close()
+            self.assertEqual([u['bill_number'] for u in json.loads(result['report'])['files'][0]['units']],['0','1','2'])
+
     def test_nested_archives_ignore_upload_and_entry_order(self):
         files=[('10.zip',archive([('법안.hwpx',b'x')])),
                ('2.zip',archive([('10/첨부.zip',archive([('2.hwpx',b'x'),('1.hwpx',b'x')])),
