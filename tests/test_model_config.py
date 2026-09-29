@@ -12,7 +12,7 @@ from webapp.api import ApiSummarizer, BASE_URL, CHANGE_PROMPT, CONTEXT, MODEL, O
 
 
 class ModelConfigTests(unittest.TestCase):
-    def test_full_job_routes_summary_to_luna_and_remarks_to_sol(self):
+    def test_full_job_routes_summary_and_remarks_to_luna(self):
         doc={'name':'법안.hwpx','source':'법안.hwpx','scope':('0','1. 의견조회.zip'),
              'lines':['지원법 일부개정법률안','주요내용','기관 지원 확대']}
         group={'name':'공문','letter':{'agency':'행정안전부','department':'법무담당관',
@@ -31,12 +31,12 @@ class ModelConfigTests(unittest.TestCase):
                  patch('webapp.api.httpx.post',side_effect=responses) as send:
                 result=process([],'key',Queue(),law_oc='oc')
         calls=[call.kwargs['json'] for call in send.call_args_list]
-        self.assertEqual([p['model'] for p in calls],['gpt-6-luna','gpt-6-sol'])
-        self.assertEqual([p['reasoning_effort'] for p in calls],['none','medium'])
+        self.assertEqual([p['model'] for p in calls],['gpt-6-luna','gpt-6-luna'])
+        self.assertEqual([p['reasoning_effort'] for p in calls],['none','none'])
         self.assertEqual(result['rows'][0],['1. 지원법','- 기관 지원 확대','행정안전부\n법무담당관','2026.9.23(수)','지원실\n지원과'])
         report=json.loads(result['report'])
         self.assertEqual(report['model'],'gpt-6-luna')
-        self.assertEqual(report['department_matching']['model'],'gpt-6-sol')
+        self.assertEqual(report['department_matching']['model'],'gpt-6-luna')
         self.assertEqual(len(report['files'][0]['requests']),1)
         self.assertEqual(len(report['department_matching']['requests']),1)
 

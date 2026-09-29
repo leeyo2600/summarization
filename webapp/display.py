@@ -1,6 +1,5 @@
 """Presentation only; preserve original metadata for audit records."""
 import re
-from collections import Counter
 from datetime import datetime
 
 
@@ -21,13 +20,11 @@ def law_label(law,member,number):
 
 
 def unit_labels(units,number):
-    """Disambiguate repeated law names within one numbered package."""
-    counts=Counter(unit['law'] for unit in units)
-    labels=[]; branch=0
-    for unit in units:
+    """Number separate summary units within a package, regardless of law name."""
+    labels=[]
+    for branch,unit in enumerate(units,1):
         display_number=number
-        if number and counts[unit['law']]>1:
-            branch+=1
+        if number and len(units)>1:
             display_number=f'{number}-{branch}'
         labels.append(law_label(unit['law'],unit.get('representative',''),display_number))
     return labels

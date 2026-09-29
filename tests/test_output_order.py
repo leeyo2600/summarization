@@ -36,7 +36,17 @@ class OutputOrderTests(unittest.TestCase):
         self.assertEqual(unit_labels(units[:1],'37'),['37. 전자정부법'])
         self.assertEqual(unit_labels(units,'10-2'),['10-2-1. 전자정부법','10-2-2. 전자정부법','10-2-3. 전자정부법'])
         self.assertEqual(unit_labels([units[0],{'law':'다른법'},units[1]],'37'),
-                         ['37-1. 전자정부법','37. 다른법','37-2. 전자정부법'])
+                         ['37-1. 전자정부법','37-2. 다른법','37-3. 전자정부법'])
+
+    def test_distinct_laws_in_same_package_get_subnumbers(self):
+        for number,laws in [('22',['평가인정 학습과정 운영지침','학점인정 등에 관한 업무처리 지침']),
+                            ('28',['근로기준법 시행령','근로기준법 시행규칙'])]:
+            with self.subTest(number=number):
+                units=[{'law':law} for law in laws]
+                self.assertEqual(unit_labels(units,number),
+                                 [f'{number}-{i}. {law}' for i,law in enumerate(laws,1)])
+                self.assertEqual(unit_labels(units,''),laws)
+        self.assertEqual(unit_labels([],'22'),[])
 
     def test_duplicate_bills_written_as_separate_numbered_rows(self):
         docs=[{'name':f'{i}.hwpx','source':f'{i}.hwpx','scope':('0','37. 의견조회.zip'),

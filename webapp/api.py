@@ -22,8 +22,8 @@ CHANGE_PROMPT = PROMPT + '''
 JSON {"items":["- 개정사항"]} 형식을 유지한다.
 '''
 BASE_URL = 'https://api.openai.com/v1'
-MODEL = 'gpt-6-luna'  # Main-content summarization only.
-DEPARTMENT_MODEL = 'gpt-6-sol'  # Remarks / department recommendation only.
+MODEL = 'gpt-6-luna'
+DEPARTMENT_MODEL = MODEL  # Use the same Luna model for department recommendations.
 CONTEXT = 1_050_000
 OUTPUT = 8192
 # Use OS trust roots (including Windows enterprise certificates), retaining
