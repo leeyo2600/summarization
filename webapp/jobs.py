@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from lawtool import ROOT, find_sections, write_excel, TITLE, ReviewRequired, join_split_titles
 from webapp.api import ApiSummarizer, BASE_URL, MODEL, DEPARTMENT_MODEL, CONTEXT, OUTPUT
+from webapp.llm_connection import resolve_connection
 from webapp.packages import prepare, representative, document_order
 from webapp.display import package_number, unit_labels, deadline_label, organization_label
 from webapp.gpt_departments import GptDepartmentMatcher as DepartmentMatcher
@@ -69,8 +70,16 @@ def build_units(group):
     if not units: raise ReviewRequired('첨부 법안에서 법령명을 확정하지 못했습니다.')
     return list(units.values()),warnings
 
-def process(files,key,progress,law_oc=None,hf_token=None):
-    engine=ApiSummarizer(BASE_URL,key,MODEL,CONTEXT,OUTPUT,'max_completion_tokens')
+def process_web(files,key,progress,law_oc,*,connection=None):
+    """The web workflow always includes department recommendations."""
+    if not isinstance(law_oc,str) or not law_oc.strip():
+        raise ValueError('소관부서 추천에 필요한 국가법령정보 API 키를 입력해주세요.')
+    return process(files,key,progress,law_oc=law_oc.strip(),connection=connection)
+
+
+def process(files,key,progress,law_oc=None,hf_token=None,*,connection=None):
+    connection=connection or resolve_connection()
+    engine=ApiSummarizer(connection.base_url,key,connection.model,CONTEXT,OUTPUT,connection.token_field)
     cfg=json.loads((ROOT/'config.json').read_text(encoding='utf-8-sig'))
     rows=[]; reports=[]; issues=[]; department_reports=[]
     matcher=None; department_error=''; department_engine=None
@@ -84,9 +93,9 @@ def process(files,key,progress,law_oc=None,hf_token=None):
         if not groups and not issues:
             issues.append({'file':'입력 묶음','error':'요약할 법안이 없습니다. 빈 양식만 있거나 지원하지 않는 형식인지 확인하세요.'})
         if groups and law_oc is not None:
-            progress.put((0,len(groups),f'현행 직제 시행규칙 조회 중 · {DEPARTMENT_MODEL}로 전체 부서 업무분장 검토'))
+            progress.put((0,len(groups),f'현행 직제 시행규칙 조회 중 · {connection.department_model}로 전체 부서 업무분장 검토'))
             try:
-                department_engine=ApiSummarizer(BASE_URL,key,DEPARTMENT_MODEL,CONTEXT,OUTPUT,'max_completion_tokens')
+                department_engine=ApiSummarizer(connection.base_url,key,connection.department_model,CONTEXT,OUTPUT,connection.token_field)
                 matcher=DepartmentMatcher(law_oc,department_engine,notify=lambda message: progress.put((0,len(groups),message)),hf_token=hf_token)
             except Exception as error:
                 department_error=str(error) if isinstance(error,ValueError) else '부서 추천 초기화 실패'
@@ -126,8 +135,8 @@ def process(files,key,progress,law_oc=None,hf_token=None):
                 message=str(error) if isinstance(error,ValueError) else '문서 처리 실패: '+type(error).__name__
                 issues.append({'file':name,'error':message})
             progress.put((index+1,len(groups),name))
-    report={'model':MODEL,'ignored_templates':ignored,'context_limit':CONTEXT,'output_limit':OUTPUT,'token_estimate':'UTF-8 bytes, not exact model tokens','files':reports,'issues':issues,
-            'department_matching':{'enabled':law_oc is not None,'model':DEPARTMENT_MODEL,'mode':'gpt_only','embedding_used':False,'threshold':None,'source':matcher.source if matcher else None,'error':department_error,'results':department_reports,'requests':department_engine.audit if department_engine else []}}
+    report={'provider':connection.provider,'model':connection.model,'ignored_templates':ignored,'context_limit':CONTEXT,'output_limit':OUTPUT,'token_estimate':'UTF-8 bytes, not exact model tokens','files':reports,'issues':issues,
+            'department_matching':{'enabled':law_oc is not None,'model':connection.department_model,'mode':'gpt_only','embedding_used':False,'threshold':None,'source':matcher.source if matcher else None,'error':department_error,'results':department_reports,'requests':department_engine.audit if department_engine else []}}
     return save_result(rows,report,success=len(reports),total=len(groups),uploaded=len(files),ignored_count=len(ignored))
 
 

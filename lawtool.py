@@ -138,7 +138,10 @@ def join_split_titles(lines):
 
 def convert_hwp(src, folder, cfg):
     jar=ROOT/cfg['converter_jar']
-    if not jar.exists(): raise ReviewRequired('HWP 변환 JAR 없음: python tools/build_converter.py 실행 필요')
+    if not jar.exists():
+        from webapp.converter_runtime import ensure_converter
+        try: ensure_converter(jar)
+        except ValueError as error: raise ReviewRequired(str(error)) from error
     out=folder/(src.stem+'.hwpx')
     try:
         r=subprocess.run(['java','-jar',str(jar),str(src.resolve()),str(out.resolve())],capture_output=True,timeout=180)

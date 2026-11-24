@@ -1,0 +1,145 @@
+{
+  "platform": "Windows x64; bundled CPython 3.13.16",
+  "interface": "html-flask",
+  "source_sha256": {
+    "PORTABLE_README.txt": "1122b0fa8e543f752e8afa74e13fab549d5ae59c6339cc499b3d926c7291fa52",
+    "THIRD_PARTY.md": "ab88ea4860e54c8ff4de55c68a00aee5647948061cdf1d06b1a2a5b18d35d895",
+    "assets/README.md": "8dc6b098e1a1fda5b3fe9fb898b451f2a4b52a607cb921e94f3ec9fdf659176a",
+    "assets/fonts/LICENSE-Hestia.txt": "f94a6b51c4c6d80b8bba8801fa4201da4733c7c61aeb5fe1635e31bc9b463f67",
+    "assets/fonts/NotoSansKR-Bold-Hestia.woff2": "7d32544740a14c7de05f1346bca978bb679cf8c779e35d7d901b837d3a254264",
+    "assets/fonts/NotoSansKR-Medium-Hestia.woff2": "2831c4fa3abcc74c3510af6fafbc337901d748979972954112236c178888b17d",
+    "assets/fonts/NotoSansKR-Regular-Hestia.woff2": "7e90755cc3576ca326e7628406ac349c96facf37e2514cc7c5b8edcf71e71355",
+    "assets/html.css": "ab660956de0bc8696b4791f61d2c1b2554d8d6232c9dc3460a95b0edaaee79d4",
+    "assets/html.js": "093c938943f0342158244be53c9c2dd4ea6539a181945152986da9286bd39143",
+    "assets/mois-logo.jpg": "22de2f7714088d7a9aa80400e1e4c3256b34e553de5f0571871c08a4c61a434d",
+    "assets/web.css": "81c76dbd0b36b60baef6159e3efc4a5cb41a6d34f8d61843570157554c64d10c",
+    "config.json": "2e895f40a061dda86269f92b34363c26c657bdb8aa21cbfcce75def431c0f733",
+    "html_app.py": "d5b16f49be8520e2263b03594196a45fd1f2da2c65a180c61f0e525ecf177a66",
+    "law_summary.cmd": "2f11dbf8f7b89f33d6af4bba3bd2cc1fad2a3b38966c66f47537f4eb440c9ade",
+    "lawtool.py": "c588fc815b10872963a06934ebe3b632cc3f214ba47e0d8bd101a04436c62705",
+    "portable_runtime.py": "7cfcb8d121ab411a8e7d2fd607af2ba7e1bc672abd6be28439895f8de0043fde",
+    "start_web.py": "90c0729006725439c8064538b347d128c091516684d93627923391bb3f98a6b4",
+    "templates/index.html": "49574064508d5ec743bc91198ecaf5b124facccdb2ee82869bc9f069b4c82942",
+    "tools/converter/LICENSE-upstream.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "tools/converter/target/hwp-converter.jar": "9d03cd4b291f236d8822e57968a354825ee40be08a8dd974e629dbabdf01f441",
+    "webapp/__init__.py": "8ce9cf720faeaeb45944c4cc5e16478674e2cb0e3ad25fa27618c56053783f03",
+    "webapp/api.py": "0e928ba14effcb5198255feb39afc9acc620cd04c301e833bca3606f676b3ef2",
+    "webapp/api_errors.py": "8c7d3e1a3ecaf41910ac67afda515d16374a4da13330a858ac57d328498659c0",
+    "webapp/converter_runtime.py": "e4896bb678ee8edec2f5b7456e6ba18eb8edc00e421a2a71cae830ba8a7cf358",
+    "webapp/department_retry.py": "65ee109c6723e62e9a7b8ef6a725d86a24c66ff1ca8794848ffc7aaf9da5205b",
+    "webapp/departments.py": "3a9c0118b19022300827a27167c8dd15559fc6f74bc965a83b76bbb564e435ab",
+    "webapp/display.py": "dabb5d39ec7e1bb6b9178555d71ff83c5b83bc3dc2400fda7b406516ce9a1843",
+    "webapp/download_progress.py": "8e6d65c1aa04599b49589f8badc31ebc9cfb81c4606ba4a95ca79aaa057ea3b7",
+    "webapp/embedding_files.py": "358fb99b2edae101a28dab8e3c1200cc48e060402ff6b06d0ceed9641de838c0",
+    "webapp/gpt_department_experiment.py": "ff4d5f1fdf7fd572520e11347a7eb8b06ec03ae9f5d2964ba712d68d05f83626",
+    "webapp/gpt_departments.py": "07098004807a2b42e19e45024ec236073f35f61456c45b3c83c64b7821be8b8c",
+    "webapp/jobs.py": "ed62957188d6145798655f21794cadc7b2d1d650b7b3ee8d25e1f4e5a43a7471",
+    "webapp/llm_connection.py": "4791163c91029ba83ed67daa9f813395bb26a3750966746ac3532719a1904a82",
+    "webapp/model_comparison.py": "13d62595e7ed1345d4e3b9e8b87bd93522233bac9b5ef44d968e21fa136ed771",
+    "webapp/packages.py": "280891c28cb692c521ef3201a3ab278441d6c757c5768189767c0b1b88d9b13a",
+    "webapp/resumable_download.py": "91c838015321877d6301c797021a3971cef0aa6b9d4e6eb6f14b55d7ed99610d",
+    "webapp/ui.py": "599cb8b5c6d43eb436166ffb0a1981c5c77468aad1053986315cb3e276a2bf39",
+    "config.example.json": "2e895f40a061dda86269f92b34363c26c657bdb8aa21cbfcce75def431c0f733"
+  },
+  "profiles": {
+    "cp313": {
+      "anyio": {
+        "version": "4.15.1",
+        "layer": "cp313"
+      },
+      "blinker": {
+        "version": "1.9.0",
+        "layer": "cp313"
+      },
+      "certifi": {
+        "version": "2026.7.22",
+        "layer": "cp313"
+      },
+      "charset-normalizer": {
+        "version": "3.4.1",
+        "layer": "cp313"
+      },
+      "click": {
+        "version": "8.5.0",
+        "layer": "cp313"
+      },
+      "defusedxml": {
+        "version": "0.7.1",
+        "layer": "cp313"
+      },
+      "et-xmlfile": {
+        "version": "2.0.0",
+        "layer": "cp313"
+      },
+      "flask": {
+        "version": "3.1.0",
+        "layer": "cp313"
+      },
+      "h11": {
+        "version": "0.16.0",
+        "layer": "cp313"
+      },
+      "httpcore": {
+        "version": "1.0.9",
+        "layer": "cp313"
+      },
+      "httpx": {
+        "version": "0.28.1",
+        "layer": "cp313"
+      },
+      "idna": {
+        "version": "3.20",
+        "layer": "cp313"
+      },
+      "itsdangerous": {
+        "version": "2.2.0",
+        "layer": "cp313"
+      },
+      "jinja2": {
+        "version": "3.1.6",
+        "layer": "cp313"
+      },
+      "markupsafe": {
+        "version": "3.0.2",
+        "layer": "cp313"
+      },
+      "openpyxl": {
+        "version": "3.1.5",
+        "layer": "cp313"
+      },
+      "pypdf": {
+        "version": "6.19.0",
+        "layer": "cp313"
+      },
+      "requests": {
+        "version": "2.34.2",
+        "layer": "cp313"
+      },
+      "typing-extensions": {
+        "version": "4.16.0",
+        "layer": "cp313"
+      },
+      "tzdata": {
+        "version": "2026.4",
+        "layer": "cp313"
+      },
+      "urllib3": {
+        "version": "2.8.0",
+        "layer": "cp313"
+      },
+      "waitress": {
+        "version": "3.0.2",
+        "layer": "cp313"
+      },
+      "werkzeug": {
+        "version": "3.1.3",
+        "layer": "cp313"
+      }
+    }
+  },
+  "embedded_python": {
+    "version": "3.13.16",
+    "archive_sha256": "97dae5274cc54867065e8d5a3226e48c35017ed332a0fdb0e27d5b5821961297",
+    "source": "https://www.python.org/ftp/python/3.13.16/python-3.13.16-embed-amd64.zip"
+  }
+}

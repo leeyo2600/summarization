@@ -52,24 +52,73 @@ def active_duties(paragraph):
             if duty_content(item) and not re.match(r'^\s*(?:\d+(?:의\d+)?[.\s]*)?삭제(?:\s|<|$)',duty_content(item))]
 
 
-def referenced_duties(intro,paragraphs):
-    # Resolve the same article's item range, preserving the adopting clause's
-    # scope/exception text. Never replace a reference with invented duties.
-    match=re.search(r'(?<!조)제(\d+)항\s*제(\d+)호(?:부터\s*제(\d+)호까지)?',intro)
-    if not match or re.search(r'제\d+조|[「『]',intro[:match.start()]): return []
-    number,first,last=map(int,(match[1],match[2],match[3] or match[2]))
-    if last<first: return []
-    source=next((node for node in paragraphs if paragraph_number(node)==number),None)
-    if source is None: return []
-    found={}
-    for item in source.findall('호'):
-        value=duty_content(item)
-        item_number=re.match(r'^\s*(\d+)\.(?:\s|$)',value)
-        if item_number and first<=int(item_number[1])<=last:
-            found[int(item_number[1])]=value
-    if set(found)!=set(range(first,last+1)): return []
-    return [f'[인용 업무] {found[index]}\n[적용 조문·범위] {intro}' for index in range(first,last+1)
-            if not re.match(r'^\s*\d+\.\s*삭제',found[index])]
+class DutyReferenceError(ValueError):
+    """A duty reference must resolve completely, never to a partial list."""
+
+
+def article_reference(article):
+    number=article.findtext('조문번호','?').strip()
+    branch=article.findtext('조문가지번호','').strip()
+    return '제'+number+'조'+('의'+str(int(branch)) if branch and int(branch) else '')
+
+
+# Only expand explicit adoption of duties. Ordinary legal citations are retained.
+REFERENCE_GROUP=re.compile(
+    r'(?:(?P<article>제\d+조(?:의\d+)?)\s*)?'
+    r'제(?P<paragraph>\d+)항\s*'
+    r'(?P<items>제\d+호(?:부터\s*제\d+호까지)?'
+    r'(?:(?:\s*(?:및|ㆍ|·|,)\s*)제\d+호(?:부터\s*제\d+호까지)?)*)')
+ITEM_RANGE=re.compile(r'제(\d+)호(?:부터\s*제(\d+)호까지)?')
+
+
+def referenced_duties(intro,paragraphs,articles=None,current_reference='',trail=()):
+    matches=list(REFERENCE_GROUP.finditer(intro))
+    if not matches: return []
+    # Quoted other statutes cannot be resolved from this law's XML.
+    if re.search(r'[「『]',intro[:matches[0].start()]): return []
+    result=[]
+    source_reference=current_reference
+    for match in matches:
+        source_reference=match['article'] or source_reference
+        sources=paragraphs
+        if source_reference!=current_reference:
+            article=(articles or {}).get(source_reference)
+            if article is None: raise DutyReferenceError('인용 조문 없음: '+source_reference)
+            sources=article.findall('항') or [article]
+        number=int(match['paragraph'])
+        source=next((node for node in sources if paragraph_number(node)==number),None)
+        if source is None: raise DutyReferenceError(f'인용 항 없음: {source_reference} 제{number}항')
+        indexed={}
+        for item in source.findall('호'):
+            value=duty_content(item)
+            item_number=re.match(r'^\s*(\d+)\.(?:\s|$)',value)
+            if item_number: indexed[int(item_number[1])]=item
+        for item_range in ITEM_RANGE.finditer(match['items']):
+            first,last=int(item_range[1]),int(item_range[2] or item_range[1])
+            if last<first: raise DutyReferenceError('인용 호 범위 역전')
+            if last-first>1000: raise DutyReferenceError('인용 호 범위 확인 필요')
+            for index in range(first,last+1):
+                if index not in indexed:
+                    raise DutyReferenceError(f'인용 호 없음: {source_reference} 제{number}항 제{index}호')
+                item=indexed[index]
+                value=duty_content(item)
+                if re.match(r'^\s*\d+\.\s*삭제(?:\s|<|$)',value): continue
+                key=(source_reference,number,index)
+                if key in trail or len(trail)>=30:
+                    raise DutyReferenceError('순환 또는 과도한 업무 인용: '+source_reference)
+                expanded=expand_duty(value,sources,articles,source_reference,(*trail,key))
+                for duty in expanded:
+                    result.append(f'[인용 업무: {source_reference} 제{number}항 제{index}호] {duty}\n[적용 조문·범위] {intro}')
+    return list(dict.fromkeys(result))
+
+
+def expand_duty(text,paragraphs,articles,current_reference,trail=()):
+    if not re.search(r'규정된\s*(?:사항|업무)',text): return [text]
+    # References to another named statute remain explicit source text.
+    if re.search(r'[「『]',text): return [text]
+    resolved=referenced_duties(text,paragraphs,articles,current_reference,trail)
+    if not resolved: raise DutyReferenceError('업무 인용 형식 확인 필요: '+text)
+    return resolved
 
 
 def request_xml(endpoint,oc,**params):
@@ -83,11 +132,13 @@ def request_xml(endpoint,oc,**params):
         return ET.fromstring(response.content),response.content
     except Exception:
         # HTTP exception URLs can contain OC. Never forward them to logs/UI.
-        raise ValueError('국가법령정보센터 조회 실패: OC 승인·서비스 권한·네트워크를 확인하세요.') from None
+        raise ValueError('국가법령정보 조회 실패: API 키·서비스 권한·네트워크를 확인하세요.') from None
 
 
 def parse_duties(root):
     records=[]; scope=''; uncovered=[]
+    articles={article_reference(a):a for a in root.findall('.//조문단위')
+              if a.findtext('조문여부')!='전문'}
     for article in root.findall('.//조문단위'):
         heading=content(article.find('조문내용'))
         if article.findtext('조문여부')=='전문':
@@ -104,7 +155,7 @@ def parse_duties(root):
             if '분장한다' not in intro: continue
             clause=re.sub(r'^제\d+조(?:의\d+)?\s*\([^)]*\)\s*','',intro)
             clause=re.sub(r'^\s*(?:[①-⑳㉑-㊿]|<\s*\d+\s*>)\s*','',clause).strip()
-            match=re.match(r'([가-힣·ㆍ]+)[은는]\s*(.+)',clause,re.S)
+            match=re.match(r'([가-힣0-9·ㆍ]+)[은는]\s*(.+)',clause,re.S)
             if not match or not match[1].endswith(ROLE_SUFFIXES):
                 uncovered.append(reference); continue
             role=match.group(1)
@@ -116,8 +167,12 @@ def parse_duties(root):
                 else:
                     uncovered.append(reference); continue
             label=(scope+' ' if scope else '')+department
-            duties=active_duties(paragraph)
-            if not duties: duties=referenced_duties(intro,paragraphs)
+            try:
+                duties=[expanded for duty in active_duties(paragraph)
+                        for expanded in expand_duty(duty,paragraphs,articles,reference)]
+                if not duties: duties=referenced_duties(intro,paragraphs,articles,reference)
+            except DutyReferenceError as error:
+                uncovered.append(reference+' ('+str(error)+')'); continue
             if not duties and '다음' not in match[2] and not re.search(r'제\d+(?:조|항|호)',match[2]):
                 duties=[intro]
             if not duties:
@@ -208,7 +263,7 @@ def department_name(record):
 
 class DepartmentMatcher:
     def __init__(self,oc,engine,notify=lambda message: None,hf_token=None):
-        if not oc.strip(): raise ValueError('국가법령정보센터 OC를 입력하세요.')
+        if not oc.strip(): raise ValueError('국가법령정보 API 키를 입력하세요.')
         model_path=ensure_embedding_files(notify,hf_token=hf_token)
         notify('현행 직제 시행규칙 조회 중')
         self.records,self.source=fetch_duties(oc.strip())

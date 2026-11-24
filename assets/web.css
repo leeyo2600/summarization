@@ -1,38 +1,151 @@
-/* MOIS-inspired work interface. No official-government-site certification. */
-.stApp {background:#fff;color:#1d2636;font-family:'Malgun Gothic','맑은 고딕',sans-serif}
-.block-container {max-width:1000px;padding-top:2.5rem;padding-bottom:3rem}
-h1,h2,h3 {color:#162d4c;letter-spacing:-.045em}
-h1 {font-size:2.2rem!important;font-weight:750!important;line-height:1.35!important}
-h3 {font-size:1.18rem!important}
-[data-testid="stCaptionContainer"] {color:#526171}
-.service-strip {background:#f1f4f8;border-top:3px solid #164a80;padding:10px 16px;font-size:12px;color:#43536a;display:flex;justify-content:space-between;gap:12px}
-.brand {padding:25px 0 22px;display:flex;align-items:center;gap:18px;border-bottom:2px solid #193958;margin:0}
-.brand strong {font-size:29px;letter-spacing:-.06em;color:#172c45}
-.brand span {font-size:15px;color:#485a6e;border-left:1px solid #c5ced9;padding-left:18px}
-.steps {display:flex;gap:0;margin:24px 0 28px;border:1px solid #cdd5df;border-radius:6px;overflow:hidden}
-.step {flex:1;display:flex;align-items:center;gap:10px;padding:16px 18px;background:#f5f7fa;color:#536176;font-size:14px;font-weight:650;border-right:1px solid #d5dce5;border-radius:0}
-.step:last-child {border-right:0}
-.step b {display:grid;place-items:center;min-width:27px;height:27px;border-radius:50%;background:#e1e7ee;color:#425772;font-size:12px}
-.step.active {background:#eaf2fc;color:#153e72;box-shadow:inset 0 -3px #185da5}
-.step.active b {background:#185da5;color:white}
-.step.done {background:#f5f8fc;color:#284f78}
-.step.done b {background:#dce9f7;color:#284f78}
-.intro-note {padding:15px 18px;margin:0 0 16px;background:#f3f7fc;border-left:3px solid #2569ad;color:#435b73;font-size:14px;line-height:1.75}
-[data-testid="stVerticalBlockBorderWrapper"] {background:#fff;border-radius:8px!important;border-color:#d6dde6!important}
-[data-testid="stTextInput"] input {min-height:48px;font-size:15px}
-[data-testid="stTextInput"] [data-baseweb="input"] {border-radius:5px;background:#fff;border-color:#8697ab}
-[data-testid="stFileUploaderDropzone"] {background:#f6f9fd;border:1px dashed #8ba4c1;border-radius:6px;padding:28px 20px}
-div.stButton>button,div.stDownloadButton>button,[data-testid="stFileUploaderDropzone"] button {min-height:48px;border-radius:5px;border:1px solid #748aa4;background:#fff;color:#173d67;font-weight:650;transition:background .15s}
-div.stButton>button:hover,div.stDownloadButton>button:hover,[data-testid="stFileUploaderDropzone"] button:hover {background:#eef4fb;border-color:#174f8c;color:#153f6f}
-div.stButton>button[kind="primary"],div.stDownloadButton>button[kind="primary"] {background:#175b9e;color:#fff;border:1px solid #175b9e;min-height:56px;box-shadow:none}
-div.stButton>button[kind="primary"]:hover,div.stDownloadButton>button[kind="primary"]:hover {background:#104579;border-color:#104579;color:#fff}
-div.stButton>button:disabled {background:#e7ebf0!important;color:#697789!important;border-color:#d5dde6!important;box-shadow:none}
-button:focus-visible,input:focus-visible {outline:3px solid #317eca!important;outline-offset:3px}
-[data-testid="stMetricValue"] {color:#164777;font-size:1.8rem}
-.eyebrow {color:#3b5d82;font-size:12px;font-weight:700;letter-spacing:.04em;margin:8px 0}
-.footer-note {margin-top:35px;padding-top:20px;border-top:1px solid #cdd5df;color:#586777;font-size:12px;line-height:1.9}
-.loading-line {display:flex;align-items:center;gap:10px;color:#175b9e;padding:10px 0}
-.loading-ring {display:inline-block;width:20px;height:20px;border:3px solid #d9e5f1;border-top-color:#175b9e;border-radius:50%;animation:law-spin 1s linear infinite}
+/* MOIS work surface; typography/spacing adapted from KRDS, checked 2026-09-29.
+   Sources and app-specific choices: assets/README.md. Not a KRDS certification. */
+:root {
+  --law-navy:#003764;
+  --law-blue:#005a95;
+  --law-red:#db2950;
+  --law-ink:#222;
+  --law-muted:#59636c;
+  --law-line:#d8dde2;
+  --law-paper:#fff;
+  --law-bg:#f2f4f6;
+  --law-font:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;
+  --law-text-body:1rem;
+  --law-text-caption:.875rem;
+  --law-text-section:1.5rem;
+  --law-text-title:2rem;
+  --law-leading:1.5;
+  --law-tracking:0;
+  --law-space-1:.25rem;
+  --law-space-2:.5rem;
+  --law-space-3:.75rem;
+  --law-space-4:1rem;
+  --law-space-6:1.5rem;
+  --law-space-8:2rem;
+  --law-action:#005ea8;
+  --law-action-hover:#004b87;
+  --law-action-pressed:#003764;
+  --law-action-disabled:#e8eff7;
+  --law-action-disabled-ink:#546478;
+  --law-control-height:3rem;
+  --law-field-label-height:2rem;
+  --law-field-gap:1rem;
+  /* Same top label on both cards; dropzone spans two controls plus the OC label and field gap. */
+  --law-upload-height:calc(var(--law-control-height) + var(--law-control-height) + var(--law-field-label-height) + var(--law-field-gap));
+}
+.stApp {background:var(--law-paper);color:var(--law-ink);font-family:var(--law-font);font-size:var(--law-text-body);letter-spacing:var(--law-tracking);line-height:var(--law-leading)}
+/* Do not override icon fonts (Material Symbols) with a universal selector. */
+.stApp :is(h1,h2,h3,h4,p,label,input,textarea,select,button,summary),
+[data-testid="stText"], [data-testid="stMetricValue"] {font-family:var(--law-font)}
+.block-container {max-width:1120px;padding:var(--law-space-6) var(--law-space-8) var(--law-space-8)}
+h1,h2,h3 {color:var(--law-ink);letter-spacing:var(--law-tracking);word-break:keep-all;overflow-wrap:anywhere}
+h1 {font-size:var(--law-text-title)!important;font-weight:700!important;line-height:var(--law-leading)!important;padding:var(--law-space-4) 0 var(--law-space-6)!important}
+h3 {font-size:var(--law-text-section)!important;font-weight:700!important;line-height:var(--law-leading)!important;padding:0 0 var(--law-space-4)!important}
+[data-testid="stMarkdownContainer"] p {font-size:var(--law-text-body);line-height:var(--law-leading);letter-spacing:var(--law-tracking)}
+[data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p {color:var(--law-muted);font-size:var(--law-text-caption);line-height:var(--law-leading)}
+[data-testid="stWidgetLabel"] p {font-size:var(--law-text-body);font-weight:500;line-height:var(--law-leading);letter-spacing:var(--law-tracking)}
+[data-testid="stWidgetLabel"] {padding-bottom:var(--law-space-2)}
+.brand {padding:var(--law-space-4) 0 var(--law-space-6);display:flex;align-items:center;gap:var(--law-space-8);flex-wrap:wrap}
+.brand strong {border-left:1px solid var(--law-line);padding-left:var(--law-space-8);font-size:1.5rem;line-height:var(--law-leading);font-weight:700;letter-spacing:var(--law-tracking);color:var(--law-navy)}
+/* Viewport for the supplied 942x228 JPEG: blank canvas only, with clear space around the mark. */
+.brand .agency-logo {position:relative;display:block;flex:0 0 auto;width:16rem;aspect-ratio:470 / 145;overflow:hidden}
+.brand .agency-logo img {position:absolute;display:block;width:200.426%;max-width:none!important;height:auto;left:-52.766%;top:-26.207%}
+/* Native buttons keep click/keyboard navigation in the same Streamlit session. */
+.st-key-workflow_nav {border:1px solid var(--law-line);border-bottom:3px solid var(--law-navy)}
+.st-key-workflow_nav [data-testid="stHorizontalBlock"] {flex-wrap:nowrap;gap:0!important;align-items:stretch}
+.st-key-workflow_nav [data-testid="stColumn"] {min-width:0!important;flex:1 1 0!important;width:auto!important}
+.st-key-workflow_nav div.stButton>button {min-height:3rem;width:100%;border:0;border-right:1px solid var(--law-line);border-radius:0;background:#f2f2f2;color:#545c65;padding:var(--law-space-3) var(--law-space-4);justify-content:flex-start;box-sizing:border-box}
+.st-key-workflow_nav [data-testid="stColumn"]:last-child button {border-right:0}
+.st-key-workflow_nav div.stButton>button p {font-size:var(--law-text-body);font-weight:500;line-height:var(--law-leading);margin:0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.st-key-workflow_nav div.stButton>button:not(:disabled):hover {background:#e5edf5;color:var(--law-navy)}
+.st-key-workflow_nav div.stButton>button[kind="primary"] {position:relative;z-index:1;background:var(--law-navy);color:#fff;transform:translateY(-.125rem);box-shadow:0 .25rem .75rem rgba(0,55,100,.22);animation:law-step-lift .24s ease-out both}
+.st-key-workflow_nav div.stButton>button[kind="primary"] p {font-weight:700}
+.st-key-workflow_nav div.stButton>button[kind="primary"]:hover {background:var(--law-navy);color:#fff}
+.st-key-workflow_nav div.stButton>button:disabled {background:#f2f2f2!important;color:#68737d!important;border-color:var(--law-line)!important}
+[data-testid="stVerticalBlockBorderWrapper"], [data-testid="stVerticalBlock"][data-border="true"] {background:var(--law-paper);border-radius:0!important;border-color:var(--law-line)!important}
+/* Both native Streamlit containers use height='stretch': the shorter card fills
+   its column to match the taller one, while uploaded lists remain unclipped. */
+.st-key-upload_panel, .st-key-credentials_panel {border-top:2px solid var(--law-navy)!important;padding:var(--law-space-6) var(--law-space-6) var(--law-space-4)!important;min-height:0}
+.st-key-upload_panel h3, .st-key-credentials_panel h3 {display:flex;align-items:center;gap:var(--law-space-2);border-bottom:1px solid var(--law-line);padding-bottom:var(--law-space-4)!important;margin-bottom:var(--law-space-2)}
+.st-key-upload_panel h3 [data-testid="stHeaderActionElements"], .st-key-credentials_panel h3 [data-testid="stHeaderActionElements"] {display:inline-flex;align-items:center;align-self:center;margin:0!important;flex:0 0 auto}
+.st-key-upload_panel h3 [data-testid="stTooltipIcon"], .st-key-credentials_panel h3 [data-testid="stTooltipIcon"] {display:flex;align-items:center;line-height:1}
+.st-key-upload_panel [data-testid="stVerticalBlock"], .st-key-credentials_panel [data-testid="stVerticalBlock"] {gap:var(--law-field-gap)}
+/* Help stays next to its label, not at the far edge of the input card. */
+.st-key-upload_panel [data-testid="stWidgetLabel"], .st-key-credentials_panel [data-testid="stWidgetLabel"] {gap:var(--law-space-2);margin-bottom:0;min-height:var(--law-field-label-height);box-sizing:border-box}
+.st-key-upload_panel [data-testid="stWidgetLabel"]>div, .st-key-credentials_panel [data-testid="stWidgetLabel"]>div {flex:0 0 auto;justify-content:center}
+[data-testid="stTextInput"] input {min-height:3rem;padding:var(--law-space-3) var(--law-space-4);font-size:var(--law-text-body);line-height:var(--law-leading);letter-spacing:var(--law-tracking)}
+[data-testid="stTextInput"] [data-baseweb="input"] {border-radius:3px;background:#fff;border-color:#8e99a4}
+[data-testid="stTextInput"] [data-baseweb="input"]:focus-within {border-color:var(--law-navy)}
+.st-key-credentials_panel [data-baseweb="input"] {min-height:var(--law-control-height);border-width:1px;box-sizing:border-box}
+.st-key-credentials_panel [data-testid="stTextInput"] input {min-height:calc(var(--law-control-height) - 2px);padding:var(--law-space-2) var(--law-space-4);box-sizing:border-box}
+.st-key-upload_panel [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] {background:#f5f8fb;border:1px dashed #8a9faf;border-radius:3px;padding:var(--law-space-6) var(--law-space-4);min-height:var(--law-upload-height);height:auto;box-sizing:border-box}
+/* Empty state only: do not center or crop the selected-file list. */
+.st-key-upload_panel [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"]:has(>[data-testid="stFileUploaderDropzoneInstructions"]) {display:flex;flex-direction:column;flex-wrap:nowrap;justify-content:center;align-items:center;gap:var(--law-space-4);text-align:center}
+.st-key-upload_panel [data-testid="stFileUploaderDropzoneInstructions"] {display:flex;flex:0 0 auto;align-self:center;align-items:center;justify-content:center;min-width:0;width:100%;text-align:center}
+.st-key-upload_panel [data-testid="stFileUploaderDropzoneInstructions"]>div {align-items:center;min-width:0;max-width:100%}
+.st-key-upload_panel [data-testid="stFileUploaderDropzoneInstructions"] :is(span,small) {font-size:var(--law-text-caption);line-height:var(--law-leading);color:var(--law-muted);white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;text-align:center}
+/* Streamlit 1.64 uses React Aria: retain the native input and align its visible box
+   with the first text line, including when the consent wraps on narrow screens. */
+.st-key-consent [data-testid="stCheckbox"]>label {align-items:flex-start;gap:var(--law-space-2)}
+.st-key-consent [data-testid="stCheckbox"]>label>div:first-of-type {width:1.125rem;height:1.125rem;box-sizing:border-box;flex-shrink:0;margin-top:calc((var(--law-text-body) * var(--law-leading) - 1.125rem) / 2)}
+.st-key-consent [data-testid="stWidgetLabel"] {padding:0;margin:0;min-width:0;width:fit-content;flex:0 1 auto;line-height:var(--law-leading);align-items:flex-start;gap:var(--law-space-2)}
+.st-key-consent [data-testid="stWidgetLabel"] [data-testid="stMarkdownContainer"] {width:auto;flex:0 1 auto}
+/* React Aria's inline help span adds its own margin; use just the shared 8px gap. */
+.st-key-consent [data-testid="stWidgetLabel"]>span:last-child {margin-left:0;flex:0 0 auto}
+.st-key-consent [data-testid="stWidgetLabel"] p {margin:0}
+.st-key-consent [data-testid="stTooltipIcon"] {display:flex;align-items:center;min-height:calc(var(--law-text-body) * var(--law-leading))}
+div.stButton>button,div.stDownloadButton>button,[data-testid="stFileUploaderDropzone"] button {min-height:48px;border-radius:3px;border:1px solid #84929e;background:#fff;color:var(--law-navy);font-weight:500;transition:background .15s,border-color .15s}
+div.stButton>button p,div.stDownloadButton>button p,[data-testid="stFileUploaderDropzone"] button p {font-size:var(--law-text-body);font-weight:500;line-height:var(--law-leading);letter-spacing:var(--law-tracking)}
+div.stButton>button:hover,div.stDownloadButton>button:hover,[data-testid="stFileUploaderDropzone"] button:hover {background:#eef4f9;border-color:var(--law-navy);color:var(--law-navy)}
+div.stButton>button[kind="primary"],div.stDownloadButton>button[kind="primary"] {background:var(--law-navy);color:#fff;border:1px solid var(--law-navy);min-height:56px;box-shadow:none}
+div.stButton>button[kind="primary"] p,div.stDownloadButton>button[kind="primary"] p {font-weight:700;font-size:1.0625rem}
+div.stButton>button[kind="primary"]:hover,div.stDownloadButton>button[kind="primary"]:hover {background:#002746;border-color:#002746;color:#fff}
+div.stButton>button:disabled {background:#eceff2!important;color:#5b6570!important;border-color:#c8d0d7!important;box-shadow:none;cursor:not-allowed}
+/* Only the main generation action gets the brighter blue. Native disabled behavior stays intact. */
+.st-key-start_summary button[kind="primary"] {min-height:3.5rem;padding:var(--law-space-3) var(--law-space-6);gap:var(--law-space-2);border-radius:4px}
+.st-key-start_summary button[kind="primary"]:not(:disabled) {background:var(--law-action);border-color:var(--law-action);color:#fff}
+.st-key-start_summary button[kind="primary"]:not(:disabled):hover {background:var(--law-action-hover);border-color:var(--law-action-hover)}
+.st-key-start_summary button[kind="primary"]:not(:disabled):active {background:var(--law-action-pressed);border-color:var(--law-action-pressed)}
+.st-key-start_summary button[kind="primary"]:disabled {background:var(--law-action-disabled)!important;border-color:#bacde0!important;color:var(--law-action-disabled-ink)!important;opacity:1;cursor:not-allowed}
+.st-key-start_summary button[kind="primary"] p {font-size:var(--law-text-body);font-weight:700;line-height:var(--law-leading);margin:0}
+button:focus-visible,input:focus-visible,summary:focus-visible {outline:3px solid #0072bc!important;outline-offset:3px}
+[data-testid="stTooltipIcon"] {color:var(--law-muted)}
+[data-testid="stExpander"] {background:#fff;border-radius:0}
+[data-testid="stExpander"] details {border-radius:0;border-color:var(--law-line)}
+[data-testid="stExpander"] summary {min-height:3.5rem;font-size:var(--law-text-body);line-height:var(--law-leading)}
+[data-testid="stExpander"] summary:hover {background:#f5f7f9;color:var(--law-navy)}
+[data-testid="stMetric"] {padding:.5rem .75rem}
+[data-testid="stMetricValue"] {color:var(--law-navy);font-size:2rem;font-weight:700;font-variant-numeric:tabular-nums}
+[data-testid="stAlert"] {border-radius:3px}
+[data-testid="stProgress"] {padding:.5rem 0}
+.eyebrow {color:var(--law-muted);font-size:var(--law-text-caption);line-height:var(--law-leading);font-weight:500;margin:var(--law-space-2) 0;padding-bottom:var(--law-space-4);border-bottom:1px solid var(--law-line)}
+.footer-note {margin-top:var(--law-space-8);padding:var(--law-space-6) 0;border-top:2px solid #818b94;color:var(--law-muted);font-size:var(--law-text-caption);line-height:var(--law-leading);word-break:keep-all}
+.footer-note .copyright {display:block;margin-top:var(--law-space-2);font-size:.8125rem;font-weight:400;line-height:var(--law-leading);color:var(--law-muted);overflow-wrap:anywhere}
+.loading-line {display:flex;align-items:center;gap:var(--law-space-3);color:var(--law-navy);padding:var(--law-space-6) 0;font-size:1.125rem;line-height:var(--law-leading);font-weight:500}
+/* Compact the time-to-status spacing only in the processing card. */
+.st-key-processing_status {gap:var(--law-space-2)!important}
+.st-key-processing_status [data-testid="stMetric"] {padding:0}
+.st-key-processing_status .eyebrow {margin:0;padding-bottom:var(--law-space-2)}
+.st-key-processing_status .loading-line {padding:var(--law-space-1) 0}
+.loading-ring {flex-shrink:0;display:inline-block;width:26px;height:26px;border:3px solid #dce5ed;border-top-color:var(--law-navy);border-right-color:var(--law-red);border-radius:50%;animation:law-spin 1s linear infinite}
 @keyframes law-spin {to {transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce) {.loading-ring {animation:none}}
-@media(max-width:540px) {.block-container{padding:1.2rem 1rem 2rem}.brand{gap:10px;padding:20px 0}.brand strong{font-size:23px}.brand span{font-size:12px;padding-left:10px}.step{padding:12px 7px;gap:5px;font-size:12px}.service-strip{font-size:11px;padding:9px}.service-strip span:last-child{display:none}h1{font-size:1.75rem!important}}
+@keyframes law-step-lift {from {transform:translateY(0);box-shadow:0 0 0 rgba(0,55,100,0)}to {transform:translateY(-.125rem);box-shadow:0 .25rem .75rem rgba(0,55,100,.22)}}
+@media(prefers-reduced-motion:reduce) {.loading-ring {animation-duration:2s}.st-key-workflow_nav button[kind="primary"] {animation:none}.st-key-workflow_nav button[kind="primary"] {transform:none}button {transition:none!important}}
+@media(max-width:800px) {
+ .block-container {padding:var(--law-space-4) var(--law-space-6) var(--law-space-8)}
+ [data-testid="stHorizontalBlock"] {flex-wrap:wrap;gap:var(--law-space-4)}
+ [data-testid="stColumn"] {width:100%!important;flex:1 1 100%!important;min-width:0!important}
+ .st-key-upload_panel,.st-key-credentials_panel {min-height:0;padding:var(--law-space-4)!important}
+ .st-key-workflow_nav div.stButton>button {padding:var(--law-space-2) var(--law-space-3)}
+}
+@media(max-width:540px) {
+ :root {--law-text-title:1.5rem;--law-text-section:1.25rem}
+ .block-container {padding:var(--law-space-4) var(--law-space-4) var(--law-space-8)}
+ .brand {align-items:flex-start;flex-direction:column;gap:var(--law-space-3);padding:var(--law-space-2) 0 var(--law-space-6)}
+ .brand strong {border:0;padding-left:0;font-size:1.25rem}
+ .brand .agency-logo {width:14rem}
+ .st-key-workflow_nav div.stButton>button {padding:var(--law-space-2)}
+ .st-key-workflow_nav div.stButton>button p {font-size:var(--law-text-caption)}
+ .st-key-upload_panel [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] {padding:var(--law-space-4) var(--law-space-3)}
+ .loading-line {font-size:1rem}
+}

@@ -7,7 +7,7 @@ from webapp.display import department_label
 
 class GptDepartmentMatcher:
     def __init__(self,oc,engine,notify=lambda message:None,hf_token=None,*,law_data=None):
-        if not oc.strip(): raise ValueError('국가법령정보센터 OC를 입력하세요.')
+        if not oc.strip(): raise ValueError('국가법령정보 API 키를 입력하세요.')
         notify(f'현행 직제 시행규칙 조회 중 · {engine.model} 전체 업무분장 검토')
         records,self.source=fetch_duties(oc.strip()) if law_data is None else law_data
         self.engine=engine
